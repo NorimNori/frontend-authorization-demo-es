@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Ducks from "./Ducks";
 import Login from "./Login";
 import MyProfile from "./MyProfile";
@@ -6,8 +6,15 @@ import Register from "./Register";
 import "./styles/App.css";
 
 function App() {
+  const isLoggedIn = false;
   return (
     <Routes>
+      <Route
+        path="*"
+        element={
+          isLoggedIn ? <Navigate to="/ducks" /> : <Navigate to="/login" />
+        }
+      />
       <Route path="/ducks" element={<Ducks />} />
       <Route path="/my-profile" element={<MyProfile />} />
       <Route
