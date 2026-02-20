@@ -3,7 +3,7 @@ import { useState } from "react";
 import Logo from "./Logo";
 import "./styles/Login.css";
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   const [data, setData] = useState({
     username: "",
     password: "",
@@ -17,8 +17,13 @@ const Login = () => {
     }));
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleLogin(data);
+  };
+
   return (
-    <div className="login">
+    <div className="login" onSubmit={handleSubmit}>
       <Logo title={"CryptoDucks"} />
       <p className="login__welcome">
         Esta aplicación contiene información confidencial. Por favor inicia
