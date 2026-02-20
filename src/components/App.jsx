@@ -2,17 +2,36 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Ducks from "./Ducks";
 import MyProfile from "./MyProfile";
 import "./styles/App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "./Login";
 import * as auth from "../utils/auth";
 import Register from "./Register";
+import { getToken, setToken } from "../utils/token";
+import * as api from "../utils/api";
 
 function App() {
   const [userData, setUserData] = useState({ username: "", email: "" });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const jwt = getToken();
+
+    if (!jwt) {
+      return;
+    }
+    api
+      .getUserInfo(jwt)
+      .then(({ username, email }) => {
+        setIsLoggedIn(true);
+        setUserData({ username, email });
+        navigate("/ducks");
+      })
+      .catch(console.error);
+  }, []);
+
   const handleRegistration = ({
     username,
     email,
@@ -40,6 +59,7 @@ function App() {
       .then((data) => {
         console.log(data);
         if (data.jwt) {
+          setToken(data.jwt);
           setUserData(data.user);
           setIsLoggedIn(true);
           navigate("/ducks");
