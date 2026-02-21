@@ -1,12 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
-function ProtectedRoute({ isLoggedIn, children }) {
-  if (!isLoggedIn) {
-    // Si el usuario no ha iniciado sesión, devuelve un componente Navigate que envía al usuario a /login
-    return <Navigate to="/login" replace />;
+function ProtectedRoute({ isLoggedIn, children, anonymous = false }) {
+  const location = useLocation();
+  const from = location.state?.from || "/";
+
+  if (anonymous && isLoggedIn) {
+    return <Navigate to={from} />;
   }
 
-  // De otra forma, renderiza el componente hijo de la ruta protegida.
+  if (!anonymous && !isLoggedIn) {
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
   return children;
 }
 
