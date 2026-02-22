@@ -15,6 +15,7 @@ import * as auth from "../utils/auth";
 import Register from "./Register";
 import { getToken, setToken } from "../utils/token";
 import * as api from "../utils/api";
+import ApiContext from "../contexts/ApiContext";
 
 function App() {
   const [userData, setUserData] = useState({ username: "", email: "" });
@@ -76,58 +77,60 @@ function App() {
   };
 
   return (
-    <Routes>
-      <Route
-        path="/ducks"
-        element={
-          <ProtectedRoute isLoggedIn={isLoggedIn}>
-            <Ducks setIsLoggedIn={setIsLoggedIn} />
-          </ProtectedRoute>
-        }
-      />
+    <ApiContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+      <Routes>
+        <Route
+          path="/ducks"
+          element={
+            <ProtectedRoute>
+              <Ducks />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/my-profile"
-        element={
-          <ProtectedRoute isLoggedIn={isLoggedIn}>
-            <MyProfile userData={userData} setIsLoggedIn={setIsLoggedIn} />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute>
+              <MyProfile userData={userData} />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/login"
-        element={
-          <ProtectedRoute isLoggedIn={isLoggedIn} anonymous>
-            <div className="loginContainer">
-              <Login handleLogin={handleLogin} />
-            </div>
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/login"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn} anonymous>
+              <div className="loginContainer">
+                <Login handleLogin={handleLogin} />
+              </div>
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/register"
-        element={
-          <ProtectedRoute isLoggedIn={isLoggedIn} anonymous>
-            <div className="registerContainer">
-              <Register handleRegistration={handleRegistration} />
-            </div>
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/register"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn} anonymous>
+              <div className="registerContainer">
+                <Register handleRegistration={handleRegistration} />
+              </div>
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="*"
-        element={
-          isLoggedIn ? (
-            <Navigate to="/ducks" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-    </Routes>
+        <Route
+          path="*"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/ducks" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
+    </ApiContext.Provider>
   );
 }
 
